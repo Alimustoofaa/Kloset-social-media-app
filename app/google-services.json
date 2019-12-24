@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "471046340630",
+    "firebase_url": "https://kloset-ababb.firebaseio.com",
+    "project_id": "kloset-ababb",
+    "storage_bucket": "kloset-ababb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471046340630:android:b64093561c3d797131f537",
+        "android_client_info": {
+          "package_name": "com.alimustofa.kloset"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "471046340630-p5jgmvrehh1itiirugems1no8ds87roj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alimustofa.kloset",
+            "certificate_hash": "13d443f9df034b6e19044d9cbf39988470d7bf74"
+          }
+        },
+        {
+          "client_id": "471046340630-mmmoo4m9o256t2ogb0ek5gjffqv4lji8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_YI7zxpNj7WYczDgp1U9sLui2-or4l2M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "471046340630-mmmoo4m9o256t2ogb0ek5gjffqv4lji8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

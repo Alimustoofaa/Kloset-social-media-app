@@ -15,6 +15,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="25dp"
         android:textAlignment="center"/>
+
     //input email
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailTIL"

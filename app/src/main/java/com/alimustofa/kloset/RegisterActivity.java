@@ -1,7 +1,8 @@
 package com.alimustofa.kloset;
 
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.ActionBar;
+import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
     //view
-    EditText mEmaileEt, mPasswordEt;
+    EditText mEmailEt, mPasswordEt;
     Button mRegisterBtn;
 
 
@@ -38,10 +39,16 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        // Actionbar and its title
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Create Account");
 
+        //enable button
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         //init
-        mEmaileEt = findViewById(R.id.emailEt);
+        mEmailEt = findViewById(R.id.emailEt);
         mPasswordEt = findViewById(R.id.passwordEt);
         mRegisterBtn = findViewById(R.id.registerBtn);
 
@@ -56,14 +63,14 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //input email, password
-                String email = mEmaileEt.getText().toString().trim();
+                String email = mEmailEt.getText().toString().trim();
                 String password = mPasswordEt.getText().toString().trim();
 
                 //validate
                 if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                     //set error and focus to email edittext
-                    mEmaileEt.setError("Email Salah");
-                    mEmaileEt.setFocusable(true);
+                    mEmailEt.setError("Email Salah");
+                    mEmailEt.setFocusable(true);
                 }else if(password.length()<6){
 
                     //set error and focus to password edit text

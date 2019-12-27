@@ -13,6 +13,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,6 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
     //view
     EditText mEmailEt, mPasswordEt;
     Button mRegisterBtn;
+    TextView mhave_accountTV;
 
 
     ProgressDialog progressDialog;
@@ -52,6 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEmailEt = findViewById(R.id.emailEt);
         mPasswordEt = findViewById(R.id.passwordEt);
         mRegisterBtn = findViewById(R.id.registerBtn);
+        mhave_accountTV = findViewById(R.id.have_accountTV);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -115,6 +118,14 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(RegisterActivity.this, ""+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        });
+
+        //handle click have account
+        mhave_accountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class) );
             }
         });
     }

@@ -52,7 +52,6 @@
             android:layout_height="wrap_content"/>
 
     </com.google.android.material.textfield.TextInputLayout>
-
     //button
     <Button
         android:id="@+id/registerBtn"
@@ -63,5 +62,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/passwordTIL"/>
+
+    <TextView
+        android:id="@+id/have_accountTV"
+        android:text="Already have account? Login"
+        android:layout_below="@+id/registerBtn"
+        android:layout_marginTop="30dp"
+        android:textAlignment="center"
+        android:textStyle="italic"
+        android:textColor="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

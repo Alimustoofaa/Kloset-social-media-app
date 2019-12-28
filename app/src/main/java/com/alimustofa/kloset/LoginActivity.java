@@ -6,11 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
 
+
+    EditText mEmailEt, mPasswordET;
     TextView mdontthave_accountTV;
+    Button mLoginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +31,19 @@ public class LoginActivity extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true);
 
         mdontthave_accountTV = findViewById(R.id.dontthave_accountTV);
+        mEmailEt= findViewById(R.id.emailEt);
+        mPasswordET = findViewById(R.id.passwordEt);
+        mLoginBtn = findViewById(R.id.loginBtn);
+
+
+        //login Btn Click
+        mLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         //handle donthave account
         mdontthave_accountTV.setOnClickListener(new View.OnClickListener() {

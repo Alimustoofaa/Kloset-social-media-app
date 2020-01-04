@@ -154,13 +154,16 @@ public class LoginActivity extends AppCompatActivity {
         //init proggres dialog
         pd = new ProgressDialog(this);
         pd.setMessage("Sending...");
+        pd.show();
         mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                pd.dismiss();
+
                 if(task.isSuccessful()){
-                    Toast.makeText(LoginActivity.this, "Email Send", Toast.LENGTH_SHORT).show();
+                    pd.dismiss();
+                    Toast.makeText(LoginActivity.this, "Email Send Check Spam Folder", Toast.LENGTH_SHORT).show();
                 }else{
+                    pd.dismiss();
                     Toast.makeText(LoginActivity.this, "Email Failed", Toast.LENGTH_SHORT).show();
                 }
             }

@@ -4,14 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,11 +26,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import static android.app.AlertDialog.*;
+
 public class LoginActivity extends AppCompatActivity {
 
 
     EditText mEmailEt, mPasswordET;
-    TextView mdontthave_accountTV;
+    TextView mdontthave_accountTV, mrecoverPassTV;
     Button mLoginBtn;
 
     //Declare an instance of FirebaseAuth
@@ -55,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         mEmailEt= findViewById(R.id.emailEt);
         mPasswordET = findViewById(R.id.passwordEt);
         mLoginBtn = findViewById(R.id.loginBtn);
+        mrecoverPassTV = findViewById(R.id.recoverPassTV);
 
 
         //login Btn Click
@@ -82,16 +89,95 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                finish();
+                }
+        });
+
+        //handle forget password and view dialog
+        mrecoverPassTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showRecoverDialog();
             }
         });
 
-        //init proggres dialog
-        pd = new ProgressDialog(this);
-        pd.setMessage("Login In...");
+
 
     }
 
+    private void showRecoverDialog() {
+        //alert dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Riset Password");
+
+        //set layout linear layout
+        LinearLayout linearLayout = new LinearLayout(this);
+
+        //view to set in dialog
+        final EditText emailEt = new EditText(this);
+        emailEt.setHint("Email");
+        emailEt.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        emailEt.setMinEms(14);
+
+        linearLayout.addView(emailEt);
+        linearLayout.setPadding(50, 20, 20, 20);
+
+        builder.setView(linearLayout);
+
+        //botton recovery
+        builder.setPositiveButton("Reset", new DialogInterface.OnClickListener(){
+
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //inpu email
+                String email = emailEt.getText().toString().trim();
+                beginRecovery(email);
+            }
+        });
+
+        //button cancel
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //dismis dialog
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
+    }
+
+    private void beginRecovery(String email) {
+        //init proggres dialog
+        pd = new ProgressDialog(this);
+        pd.setMessage("Sending...");
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                pd.dismiss();
+                if(task.isSuccessful()){
+                    Toast.makeText(LoginActivity.this, "Email Send", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(LoginActivity.this, "Email Failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                pd.dismiss();
+                //get and show proper error messege
+                Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void loginUser(String email, String pass) {
+        //init proggres dialog
+        pd = new ProgressDialog(this);
+        pd.setMessage("Login In...");
         //show progress
         pd.show();
         mAuth.signInWithEmailAndPassword(email, pass)

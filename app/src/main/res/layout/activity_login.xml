@@ -52,6 +52,17 @@
             android:layout_height="wrap_content"/>
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/recoverPassTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Forget Password?"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:layout_below="@id/loginBtn"
+        android:layout_marginTop="10dp"/>
     //button
     <Button
         android:id="@+id/loginBtn"
@@ -68,8 +79,8 @@
     <TextView
         android:id="@+id/dontthave_accountTV"
         android:text="Don't have account? Register"
-        android:layout_below="@+id/loginBtn"
-        android:layout_marginTop="30dp"
+       android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
         android:textAlignment="center"
         android:textStyle="italic"
         android:textColor="@color/colorPrimary"

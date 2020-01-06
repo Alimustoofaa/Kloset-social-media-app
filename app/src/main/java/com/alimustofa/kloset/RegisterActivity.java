@@ -22,7 +22,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -98,6 +101,30 @@ public class RegisterActivity extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     progressDialog.dismiss();
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    //Gey user email and uid from auth
+                                    String email = user.getEmail();
+                                    String uid = user.getUid();
+
+                                    //when user is registered store user info in firebases realtime databases to
+                                    // using HasMap
+                                    HashMap<Object, String> hasMap = new HashMap<>();
+
+                                    //put indo in hashmap
+                                    hasMap.put("email",email);
+                                    hasMap.put("uid",uid);
+                                    hasMap.put("name",""); //will add later edit profile
+                                    hasMap.put("phone","");//will add later edit profile
+                                    hasMap.put("image","");//will add later edit profile
+
+                                    //firebases databases instance
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+                                    //path to store user named
+                                    DatabaseReference reference = database.getReference("Users");
+
+                                    //put data with in hasmap in databases
+                                    reference.child(uid).setValue(hasMap);
+
                                     Toast.makeText(RegisterActivity.this, "Register..\n"+user.getEmail()+"\nSucces",Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                                     finish();

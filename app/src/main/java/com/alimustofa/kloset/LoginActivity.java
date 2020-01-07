@@ -282,29 +282,34 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            //Gey user email and uid from auth
-                            String email = user.getEmail();
-                            String uid = user.getUid();
+                            //if user is signing in frist time then get and show user info from google account
+                            if (task.getResult().getAdditionalUserInfo().isNewUser()){
+                                //Get user email and uid from auth
+                                String email = user.getEmail();
+                                String uid = user.getUid();
 
-                            //when user is registered store user info in firebases realtime databases to
-                            // using HasMap
-                            HashMap<Object, String> hasMap = new HashMap<>();
+                                //when user is registered store user info in firebases realtime databases to
+                                // using HasMap
+                                HashMap<Object, String> hasMap = new HashMap<>();
 
-                            //put indo in hashmap
-                            hasMap.put("email",email);
-                            hasMap.put("uid",uid);
-                            hasMap.put("name",""); //will add later edit profile
-                            hasMap.put("phone","");//will add later edit profile
-                            hasMap.put("image","");//will add later edit profile
+                                //put indo in hashmap
+                                hasMap.put("email",email);
+                                hasMap.put("uid",uid);
+                                hasMap.put("name",""); //will add later edit profile
+                                hasMap.put("phone","");//will add later edit profile
+                                hasMap.put("image","");//will add later edit profile
 
-                            //firebases databases instance
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                //firebases databases instance
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-                            //path to store user named
-                            DatabaseReference reference = database.getReference("Users");
+                                //path to store user named
+                                DatabaseReference reference = database.getReference("Users");
 
-                            //put data with in hasmap in databases
-                            reference.child(uid).setValue(hasMap);
+                                //put data with in hasmap in databases
+                                reference.child(uid).setValue(hasMap);
+                            }
+
+
 
                             //show user email in toast
                             Toast.makeText(LoginActivity.this, ""+user.getEmail(), Toast.LENGTH_SHORT).show();

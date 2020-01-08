@@ -298,6 +298,7 @@ public class LoginActivity extends AppCompatActivity {
                                 hasMap.put("name",""); //will add later edit profile
                                 hasMap.put("phone","");//will add later edit profile
                                 hasMap.put("image","");//will add later edit profile
+                                hasMap.put("cover","");
 
                                 //firebases databases instance
                                 FirebaseDatabase database = FirebaseDatabase.getInstance();

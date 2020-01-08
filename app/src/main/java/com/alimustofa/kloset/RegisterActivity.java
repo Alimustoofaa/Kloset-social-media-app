@@ -115,6 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     hasMap.put("name",""); //will add later edit profile
                                     hasMap.put("phone","");//will add later edit profile
                                     hasMap.put("image","");//will add later edit profile
+                                    hasMap.put("cover","");//will add later edit profile
 
                                     //firebases databases instance
                                     FirebaseDatabase database = FirebaseDatabase.getInstance();

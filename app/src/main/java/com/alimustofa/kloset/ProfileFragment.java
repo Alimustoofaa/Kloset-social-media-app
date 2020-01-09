@@ -159,6 +159,7 @@ public class ProfileFragment extends Fragment {
                     }
 
                 }
+
             }
 
             @Override
@@ -197,6 +198,8 @@ public class ProfileFragment extends Fragment {
         requestPermissions(cameraPermission, CAMERA_REQUEST_CODE);
     }
 
+
+
     private void showDialogEditProfile() {
         /*show dialog contaimimg options
             --Edit Profile:
@@ -206,6 +209,8 @@ public class ProfileFragment extends Fragment {
             4) Cover Photo
 
          */
+
+
         //optioon to show in dialog
         String option[] = {"Edit Profile Picture","Edit Cover Photo","Edit Name","edit Phone"};
 
@@ -216,7 +221,8 @@ public class ProfileFragment extends Fragment {
         //set items to dialog
         builder.setItems(option, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which ) {
+
                 //handle dialog item clicks
                 if(which == 0){
                     //edit profile clicked
@@ -234,6 +240,7 @@ public class ProfileFragment extends Fragment {
                     pd.setMessage("Updating Name");
                     showNamePhoneUpdateDialog("name");
 
+
                 }else  if(which == 3){
                     //edit phone clicked
                     pd.setMessage("Updating Phone");
@@ -248,6 +255,8 @@ public class ProfileFragment extends Fragment {
 
     private void showNamePhoneUpdateDialog(final String key) {
 
+
+
         //custom dialog
         AlertDialog.Builder builder= new AlertDialog.Builder(getActivity());
         builder.setTitle("Update "+key);
@@ -255,7 +264,7 @@ public class ProfileFragment extends Fragment {
         //set layout of dialog
         LinearLayout linearLayout = new LinearLayout(getActivity());
         linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setPadding(10,10,10,10);
+        linearLayout.setPadding(20,10,10,10);
         //add edit text
         final EditText editText = new EditText(getActivity());
         editText.setHint("Enter "+key);

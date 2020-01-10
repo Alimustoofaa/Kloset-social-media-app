@@ -1,4 +1,4 @@
-package com.alimustofa.kloset;
+package com.alimustofa.kloset.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alimustofa.kloset.R;
+import com.alimustofa.kloset.models.ModelUsers;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

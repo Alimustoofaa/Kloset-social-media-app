@@ -1,4 +1,4 @@
-package com.alimustofa.kloset;
+package com.alimustofa.kloset.models;
 
 public class ModelUsers {
 

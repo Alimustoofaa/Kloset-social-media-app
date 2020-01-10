@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 
 
+import com.alimustofa.kloset.adapters.AdapterUser;
+import com.alimustofa.kloset.models.ModelUsers;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

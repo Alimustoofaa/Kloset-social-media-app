@@ -1,6 +1,7 @@
 package com.alimustofa.kloset.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alimustofa.kloset.ChatActivity;
 import com.alimustofa.kloset.R;
 import com.alimustofa.kloset.models.ModelUsers;
 import com.squareup.picasso.Picasso;
@@ -40,6 +42,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int i) {
         //get data
+        final String hisUID = usersList.get(i).getUid();
         String userImage = usersList.get(i).getImage();
         String userName = usersList.get(i).getName();
         final String userEmail = usersList.get(i).getEmail();
@@ -58,7 +61,9 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, ""+userEmail, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("hisUID", hisUID);
+                context.startActivity(intent);
             }
         });
 

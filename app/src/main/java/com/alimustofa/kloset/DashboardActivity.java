@@ -107,27 +107,5 @@ public class DashboardActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    //inflate action menu
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        //indlating menu
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    //handle menu item
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //get item id
-        int id = item.getItemId();
-        if(id == R.id.action_logout){
-            firebaseAuth.signOut();
-            checkUserStatus();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

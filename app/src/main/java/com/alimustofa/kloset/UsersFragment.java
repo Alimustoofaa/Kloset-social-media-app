@@ -1,16 +1,26 @@
 package com.alimustofa.kloset;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
+
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +42,9 @@ public class UsersFragment extends Fragment {
     AdapterUser adapterUser;
     List<ModelUsers> usersList;
 
+    //firebases auth
+    FirebaseAuth firebaseAuth;
+
 
     public UsersFragment() {
         // Required empty public constructor
@@ -43,6 +56,9 @@ public class UsersFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_users, container, false);
+
+        //init
+        firebaseAuth = FirebaseAuth.getInstance();
 
         //init recyle view
         recyclerView = view.findViewById(R.id.users_recyclerView);
@@ -89,6 +105,124 @@ public class UsersFragment extends Fragment {
 
             }
         });
+    }
+
+    private void searchUsers(final String query) {
+        //get current user
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //get path of databases
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                usersList.clear();
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    ModelUsers modelUsers= ds.getValue(ModelUsers.class);
+
+                    if (!modelUsers.getUid().equals(firebaseUser.getUid())){
+
+                        if (modelUsers.getName().toLowerCase().contains(query.toLowerCase()) ||
+                                modelUsers.getEmail().toLowerCase().contains(query.toLowerCase())){
+                            usersList.add(modelUsers);
+                        }
+
+                    }
+
+                    //adapter
+                    adapterUser = new AdapterUser(getActivity(), usersList);
+                    //refresh adapter
+                    adapterUser.notifyDataSetChanged();
+                    //set adapter to recycle
+                    recyclerView.setAdapter(adapterUser);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void checkUserStatus(){
+        //get current user
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if(user !=null){
+            //user sign and stay here
+
+            //set email of loggged in user
+
+        }else{
+            startActivity(new Intent(getActivity(), MainActivity.class));
+            getActivity().finish();
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);// to show menu option in fragment
+        super.onCreate(savedInstanceState);
+    }
+
+    //inflate action menu
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        //indlating menu
+        inflater.inflate(R.menu.menu_main, menu);
+
+        //searchview
+        MenuItem item = menu.findItem(R.id.action_serach);
+        final SearchView searchView= (SearchView) MenuItemCompat.getActionView(item);
+
+        //search listener
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //if search query is not empety then search
+                if (!TextUtils.isEmpty(query.trim())){
+                    ///search tect constains text, search it
+                    searchUsers(query);
+                }else {
+                    //search text empety, get all users
+                    getAllUser();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                //if search query is not empety then search
+                if (!TextUtils.isEmpty(query.trim())){
+                    ///search tect constains text, search it
+                    searchUsers(query);
+                }else {
+                    //search text empety, get all users
+                    getAllUser();
+                }
+                return false;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+
+    //handle menu item
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //get item id
+        int id = item.getItemId();
+        if(id == R.id.action_logout){
+            firebaseAuth.signOut();
+            checkUserStatus();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }

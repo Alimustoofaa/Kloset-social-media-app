@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E9FDEE"
+    android:background="#F5FFF5"
     tools:context=".ChatActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:text="His Nasme"
                 android:textColor="#fff"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginLeft="5dp"/>
 
@@ -46,21 +46,24 @@
                 android:layout_height="wrap_content"
                 android:text="Online"
                 android:textColor="#fff"
-                android:textSize="18sp"
+                android:textSize="12sp"
                 android:layout_marginLeft="5dp"/>
         </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
     <!--Recycler View-->
+
+    <!---sen message edit text adn button sin layout-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_reyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/chatLayout"
         android:layout_below="@id/toolbar"
-        android:layout_above="@+id/chatLayout"/>
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
 
-    <!---sen message edit text adn button sin layout-->
     <LinearLayout
         android:id="@+id/chatLayout"
         android:layout_width="match_parent"
@@ -75,6 +78,7 @@
             android:background="@null"
             android:hint="Start typing"
             android:padding="15dp"
+            android:textSize="12dp"
             android:inputType="textCapSentences|textMultiLine"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>

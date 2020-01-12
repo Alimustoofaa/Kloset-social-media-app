@@ -20,7 +20,8 @@
             android:layout_height="35dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_default"
-            app:c_background_color="@color/colorPrimaryDark"/>
+            app:c_border_color="@null"
+          />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:text="His Nasme"
                 android:textColor="#fff"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginLeft="5dp"/>
 

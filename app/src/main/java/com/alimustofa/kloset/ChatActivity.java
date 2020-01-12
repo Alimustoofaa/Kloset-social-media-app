@@ -3,6 +3,7 @@ package com.alimustofa.kloset;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -13,13 +14,17 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.EditText;
 
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alimustofa.kloset.adapters.AdapterChat;
+import com.alimustofa.kloset.models.ModelChat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,7 +35,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -48,8 +55,17 @@ public class ChatActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databasesUser;
 
+    //for checking if use has send message or not
+    ValueEventListener sendListerner;
+    DatabaseReference userReferenceSend;
+
+    List<ModelChat> chatList;
+    AdapterChat adapterChat;
+
+
     String hisUid;
     String myUid;
+    String hisImage;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -70,6 +86,13 @@ public class ChatActivity extends AppCompatActivity {
         massageEt = findViewById(R.id.massageEt);
         sendBtn = findViewById(R.id.sendBtn);
 
+        //layout (Linear Layout ) for RecyclerView
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+
+        //recyclerview properties
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         Intent intent= getIntent();
         hisUid = intent.getStringExtra("hisUID");
@@ -91,12 +114,12 @@ public class ChatActivity extends AppCompatActivity {
                 for (DataSnapshot ds : dataSnapshot.getChildren()){
                     //get data
                     String name = ""+ds.child("name").getValue();
-                    String  image =""+ ds.child("image").getValue();
+                    hisImage =""+ ds.child("image").getValue();
 
                     //set data
                     nameTv.setText(name);
                     try{
-                        Picasso.get().load(image).into(profileIv);
+                        Picasso.get().load(hisImage).into(profileIv);
                     }catch (Exception e){
                         Picasso.get().load(R.drawable.ic_dafault_img_white).into(profileIv);
                     }
@@ -126,16 +149,75 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        readMessage();
+
+        senddMessage();
+
+    }
+
+    private void senddMessage() {
+        userReferenceSend = FirebaseDatabase.getInstance().getReference("Chats");
+        sendListerner = userReferenceSend.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds :dataSnapshot.getChildren()){
+                    ModelChat chat = ds.getValue(ModelChat.class);
+                    if (chat.getReceiver().equals(myUid)&& chat.getSender().equals(hisUid)){
+                        HashMap<String, Object> hasSendHasMap = new HashMap<>();
+                        hasSendHasMap.put("is Send", true);
+                        ds.getRef().updateChildren(hasSendHasMap);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void readMessage() {
+        chatList = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chatList.clear();
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    ModelChat modelChat = ds.getValue(ModelChat.class);
+                    if (modelChat.getReceiver().equals(myUid)&& modelChat.getSender().equals(hisUid)||
+                        modelChat.getReceiver().equals(hisUid) && modelChat.getSender().equals(myUid)){
+                        chatList.add(modelChat);
+                    }
+                    //adapter
+                    adapterChat = new AdapterChat(ChatActivity.this, chatList, hisImage );
+                    adapterChat.notifyDataSetChanged();
+
+                    //set adapter to recyelerview
+                    recyclerView.setAdapter(adapterChat);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void sendMessage(String message) {
 
         DatabaseReference databaseReference =FirebaseDatabase.getInstance().getReference();
 
+        String timestamp = String.valueOf(System.currentTimeMillis());
+
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", myUid);
         hashMap.put("receiver", hisUid);
         hashMap.put("message", message);
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("isSend", false);
         databaseReference.child("Chats").push().setValue(hashMap);
 
         //reset edit text after sending message
@@ -160,6 +242,12 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStart() {
         checkUserStatus();
         super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        userReferenceSend.removeEventListener(sendListerner);
     }
 
     public boolean onCreateOptionsMenu(Menu menu){

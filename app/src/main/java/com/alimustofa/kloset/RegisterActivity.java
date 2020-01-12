@@ -113,6 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     hasMap.put("email",email);
                                     hasMap.put("uid",uid);
                                     hasMap.put("name",""); //will add later edit profile
+                                    hasMap.put("onlineStatus","online"); //will add later edit profile
                                     hasMap.put("phone","");//will add later edit profile
                                     hasMap.put("image","");//will add later edit profile
                                     hasMap.put("cover","");//will add later edit profile

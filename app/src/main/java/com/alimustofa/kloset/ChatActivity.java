@@ -11,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,8 +37,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -116,8 +119,20 @@ public class ChatActivity extends AppCompatActivity {
                     String name = ""+ds.child("name").getValue();
                     hisImage =""+ ds.child("image").getValue();
 
+                    //get value of online status
+                    String onlineStatus = ""+ds.child("onlineStatus").getValue();
+                    if (onlineStatus.equals("online")){
+                        userStatusTv.setText(onlineStatus);
+                    }else{
+                        //convert time stamp to dd/mm/yyyy hh:mm am.pm
+                        Calendar calender = Calendar.getInstance(Locale.ENGLISH);
+                        calender.setTimeInMillis(Long.parseLong(onlineStatus));
+                        String dateTime = DateFormat.format("dd/MM/yyyy hh:mm",calender).toString();
+                        userStatusTv.setText("Last seen at :"+dateTime);
+                    }
                     //set data
                     nameTv.setText(name);
+
                     try{
                         Picasso.get().load(hisImage).into(profileIv);
                     }catch (Exception e){
@@ -238,16 +253,39 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    private void checkonlinestatus(String status){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+        HashMap<String, Object> hashMap= new HashMap<>();
+        hashMap.put("onlineStatus", status);
+
+
+        databaseReference.updateChildren(hashMap);
+    }
+
     @Override
     protected void onStart() {
         checkUserStatus();
+        //set online
+        checkonlinestatus("online");
         super.onStart();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    //get time
+        String timestamp = String.valueOf(System.currentTimeMillis());
+
+        //set ofline with last seen time stamp
+        checkonlinestatus(timestamp);
         userReferenceSend.removeEventListener(sendListerner);
+    }
+
+    @Override
+    protected void onResume() {
+        //set online
+        checkonlinestatus("online");
+        super.onResume();
     }
 
     public boolean onCreateOptionsMenu(Menu menu){

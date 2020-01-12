@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -118,18 +120,26 @@ public class ChatActivity extends AppCompatActivity {
                     //get data
                     String name = ""+ds.child("name").getValue();
                     hisImage =""+ ds.child("image").getValue();
+                    String typingStatus = ""+ds.child("typingTo").getValue();
 
-                    //get value of online status
-                    String onlineStatus = ""+ds.child("onlineStatus").getValue();
-                    if (onlineStatus.equals("online")){
-                        userStatusTv.setText(onlineStatus);
-                    }else{
-                        //convert time stamp to dd/mm/yyyy hh:mm am.pm
-                        Calendar calender = Calendar.getInstance(Locale.ENGLISH);
-                        calender.setTimeInMillis(Long.parseLong(onlineStatus));
-                        String dateTime = DateFormat.format("dd/MM/yyyy hh:mm",calender).toString();
-                        userStatusTv.setText("Last seen at :"+dateTime);
+                    //check tyiping status
+                    if (typingStatus.equals(myUid)){
+                        userStatusTv.setText("tyiping...");
+                    }else {
+                        //get value of online status
+                        String onlineStatus = ""+ds.child("onlineStatus").getValue();
+                        if (onlineStatus.equals("online")){
+                            userStatusTv.setText(onlineStatus);
+                        }else{
+                            //convert time stamp to dd/mm/yyyy hh:mm am.pm
+                            Calendar calender = Calendar.getInstance(Locale.ENGLISH);
+                            calender.setTimeInMillis(Long.parseLong(onlineStatus));
+                            String dateTime = DateFormat.format("dd/MM/yyyy hh:mm",calender).toString();
+                            userStatusTv.setText("Last seen at :"+dateTime);
+                        }
+
                     }
+
                     //set data
                     nameTv.setText(name);
 
@@ -161,6 +171,28 @@ public class ChatActivity extends AppCompatActivity {
                     sendMessage(message);
 
                 }
+            }
+        });
+
+        //check edit text change listerner
+        massageEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().length()==0){
+                    checkoTypingtatus("noOne");
+                }else{
+                    checkoTypingtatus(hisUid);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -262,6 +294,15 @@ public class ChatActivity extends AppCompatActivity {
         databaseReference.updateChildren(hashMap);
     }
 
+    private void checkoTypingtatus(String typing){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+        HashMap<String, Object> hashMap= new HashMap<>();
+        hashMap.put("typingTo", typing);
+
+
+        databaseReference.updateChildren(hashMap);
+    }
+
     @Override
     protected void onStart() {
         checkUserStatus();
@@ -278,6 +319,7 @@ public class ChatActivity extends AppCompatActivity {
 
         //set ofline with last seen time stamp
         checkonlinestatus(timestamp);
+        checkoTypingtatus("noOne");
         userReferenceSend.removeEventListener(sendListerner);
     }
 

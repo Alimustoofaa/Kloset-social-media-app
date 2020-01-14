@@ -187,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
-                if(task.isSuccessful()){
+                if(!task.isSuccessful()){
                     pd.dismiss();
                     Toast.makeText(LoginActivity.this, "Email Send Check Spam Folder", Toast.LENGTH_SHORT).show();
                 }else{

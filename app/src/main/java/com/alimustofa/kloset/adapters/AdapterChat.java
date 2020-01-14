@@ -1,21 +1,32 @@
 package com.alimustofa.kloset.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alimustofa.kloset.R;
 import com.alimustofa.kloset.models.ModelChat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,7 +65,7 @@ public class AdapterChat extends RecyclerView.Adapter <AdapterChat.MyHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyHolder holder, final int position) {
         //get data
         String message = chatList.get(position).getMessage();
         String timeStamp = chatList.get(position).getTimestamp();
@@ -74,6 +85,31 @@ public class AdapterChat extends RecyclerView.Adapter <AdapterChat.MyHolder> {
 
         }
 
+        holder.messageLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //show konfrim delete message
+                AlertDialog.Builder builder= new AlertDialog.Builder(context);
+                builder.setTitle("Delete");
+                builder.setMessage("Are you sure to delete this message");
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteMessage(position);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                //create new dialog
+                builder.show();
+            }
+        });
+
         //set send or delivered status
         if (position==chatList.size()-1){
             if (chatList.get(position).isSend()){
@@ -85,6 +121,38 @@ public class AdapterChat extends RecyclerView.Adapter <AdapterChat.MyHolder> {
             holder.isSendTv.setVisibility(View.GONE);
         }
 
+    }
+
+    private void deleteMessage(int position) {
+        final String getUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        String messegeTS = chatList.get(position).getTimestamp();
+        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Chats");
+        Query query = databaseReference.orderByChild("timestamp").equalTo(messegeTS);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+
+                        if (ds.child("sender").getValue().equals(getUid)){
+                            //ds.getRef().removeValue();
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("message", "This message was deletd");
+                            ds.getRef().updateChildren(hashMap);
+                            Toast.makeText(context, "message deleted...", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(context, "You can delete only your message...", Toast.LENGTH_SHORT).show();
+                        }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -112,6 +180,7 @@ public class AdapterChat extends RecyclerView.Adapter <AdapterChat.MyHolder> {
         //views
         ImageView profileIv;
         TextView messegeTv, timeTv, isSendTv;
+        LinearLayout messageLayout; // for click listener to show delete message
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -121,7 +190,7 @@ public class AdapterChat extends RecyclerView.Adapter <AdapterChat.MyHolder> {
             messegeTv = itemView.findViewById(R.id.messageTv);
             timeTv = itemView.findViewById(R.id.timeTv);
             isSendTv = itemView.findViewById(R.id.issendTv);
-
+            messageLayout=itemView.findViewById(R.id.messangeLayout);
 
 
         }
